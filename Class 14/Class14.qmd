@@ -1,0 +1,201 @@
+---
+title: "Class 14: RNA-seq analysis mini-project"
+author: "Joseph Elmaghraby (A16788229) 02/20/25"
+format: pdf
+toc: true
+---
+
+## Background
+
+The data  for hands-on session comes from GEO entry: GSE37704, which is associated with the following publication:
+
+>Trapnell C, Hendrickson DG, Sauvageau M, Goff L et al. "Differential analysis of gene regulation at transcript resolution with RNA-seq". Nat Biotechnol 2013 Jan;31(1):46-53. PMID: 23222703
+
+The authors report on differential analysis of lung fibroblasts in response to loss of the developmental transcription factor HOXA1. Their results and others indicate that HOXA1 is required for lung fibroblast and HeLa cell cycle progression. In particular their analysis show that "loss of HOXA1 results in significant expression level changes in thousands of individual transcripts, along with isoform switching events in key regulators of the cell cycle". For our session we have used their Sailfish gene-level estimated counts and hence are restricted to protein-coding genes only.
+##Data Import
+
+```{r}
+counts <- read.csv("GSE37704_featurecounts.csv", row.names = 1)
+colData<-read.csv("GSE37704_metadata.csv")
+```
+
+##Inspect and Tidy Data
+
+Does the `counts` columns match the `colData` rows?
+
+```{r}
+head(counts)
+```
+```{r}
+colData
+```
+
+```{r}
+colData$id
+```
+```{r}
+colnames(counts)
+```
+
+The fix here looks to be removing the first "length" column from counts:
+
+```{r}
+countData <- counts[,-1]
+head(countData)
+```
+
+Check for matching contData and colData
+```{r}
+colnames(countData)==colData$id
+```
+>Q1. How many gnes in total
+
+```{r}
+nrow(countData)
+```
+>Q2. Filter to remove zero count genes (rows where there are zero counts in all columns). How many genes are left?
+
+```{r}
+to.keep.inds<-rowSums(countData) >0
+```
+```{r}
+ new.counts <-countData[to.keep.inds,]
+```
+```{r}
+nrow(new.counts)
+```
+
+
+
+##Setup for DESeq
+
+```{r}
+#/ message: false
+library(DESeq2)
+```
+
+```{r}
+dds<- DESeqDataSetFromMatrix(countData = new.counts,
+                             colData= colData,
+                             design= ~condition)
+```
+
+##Run DESeq
+
+```{r}
+dds<- DESeq(dds)
+res<- results(dds)
+```
+
+
+```{r}
+head(res)
+```
+
+##Volcano plot results
+```{r}
+library(ggplot2)
+```
+```{r}
+mycols<-rep("gray",nrow(res))
+mycols[res$log2FoldChange >= 2] <- "red"
+mycols[res$log2FoldChange <= -2]<- "blue"
+mycols[res$padj > 0.05]<- "gray"
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(res)+
+  aes(x=res$log2FoldChange, y=-log(res$padj))+
+  geom_vline(xintercept = c(-2,2), col="red") +
+  geom_hline(yintercept=0.05)+
+  geom_point(col=mycols)
+```
+
+## Gene Annotation 
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+```
+
+```{r}
+columns(org.Hs.eg.db)
+```
+ Add gene symbol and entrez 
+ 
+```{r}
+res$symbol = mapIds(org.Hs.eg.db,
+                    keys=rownames(res), 
+                    keytype="ENSEMBL",
+                    column="SYMBOL")
+
+res$entrez = mapIds(org.Hs.eg.db,
+                    keys=rownames(res),
+                    keytype="ENSEMBL",
+                    column="ENTREZID",
+                    )
+```
+```{r}
+head(res)
+```
+ 
+##Pathway Analysis
+
+```{r}
+library(gage)
+library(gageData)
+library(pathview)
+```
+Input vector for `gage()`
+```{r}
+foldchanges= res$log2FoldChange
+names(foldchanges) = res$entrez
+```
+Load up the KEGG 
+```{r}
+data(kegg.sets.hs)
+```
+
+Run Pathway analysis
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+```
+
+```{r}
+head(keggres$less, 3)
+```
+Cell Cycle figure 
+
+```{r}
+pathview(foldchanges, pathway.id = "hsa04110")
+```
+```{r}
+pathview(foldchanges, pathway.id = "hsa03030")
+```
+```{r}
+pathview(foldchanges, pathway.id = "hsa05130")
+```
+
+
+![](hsa04110.png)
+![](hsa03030.png)
+
+![](hsa05130.png)
+
+
+##Gene Ontology Analysis
+
+Run pathway analysis with GO
+```{r}
+data(go.sets.hs)
+data(go.subs.hs)
+
+# Focus on Biological Process subset of GO
+gobpsets = go.sets.hs[go.subs.hs$BP]
+
+gobpres = gage(foldchanges, gsets=gobpsets, same.dir=TRUE)
+
+head(gobpres$less)
+```
+
