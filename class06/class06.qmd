@@ -1,0 +1,128 @@
+---
+title: "R functions"
+author: "Joseph Elmaghraby (PID: A16788229)"
+format: pdf
+---
+
+Today we will get more exposure to functions in R. We call functions to do all our work and today we will learn how to write our own. 
+
+## Afirst silly function
+
+Note that arguments 2 and 3 have default values (because we set y=0 and z=0) sow ed don't have to supply then when we call our function. 
+```{r}
+add <- function (x,y=0,z=0) {
+  x + y + z
+}
+```
+
+Can I just use this 
+
+```{r}
+add(1,1)
+add(1, c(10, 100))
+```
+```{r}
+add(100)
+```
+
+```{r}
+add (100,10,1)
+```
+
+
+## A second more fun function
+
+Let's start a function that generate nucleotide sequences.
+
+We can make use of the in-built 'sample()' function R to help
+
+```{r}
+sample(x=1:10, size=9)
+```
+```{r}
+sample(x=1:10, size=11, replace= TRUE)
+```
+
+>Q. Can you use 'sample()' to generate a nucle0tide sequence of length 5?
+
+```{r}
+sample(x=c("A","G","T","C"), size=5, replace= TRUE)
+```
+
+
+
+>Q. Write a Function 'generate_dna()' that makes a nucleotide sequence of a user specified length?
+
+Every function in R has at least 3 things: 
+
+-a **name** (in our case "generate_DNA" ) 
+
+-one or more **input arguments** (the "length" of the sequnce we want)
+
+-a **body** ( R code that does work )
+
+```{r}
+generate_DNA <- function(length=5) {
+  
+  bases<-c("A","C", "G", "T")
+  sample(bases, size=length, replace=TRUE)
+  
+}
+
+```
+
+```{r}
+generate_DNA(38)
+```
+
+
+
+```{r}
+aa <-bio3d::aa.table$aa1[1:20]
+```
+
+>Can you write a 'generate_protein()'
+
+```{r}
+
+generate_protein <- function(length=5) {
+  aa <-bio3d::aa.table$aa1[1:20]
+  bases<-c(aa)
+  result<-sample(bases, size=length, replace=TRUE)
+  paste(result, collapse="")
+  
+}
+
+generate_protein(45)
+```
+```{r}
+generate_protein(23)
+```
+I want my output of this function not to be a vector with one amino acid per element but rather single string
+
+```{r}
+bases<- c(aa)
+paste(bases, collapse="")
+```
+
+>Q. Generate protein sequnces from length 6 to 12? 
+
+```{r}
+generate_protein(length=6)
+generate_protein(length=7)
+generate_protein(length=8)
+```
+
+We can use the useful utility function 'sapply()' to help us "apply" our function over all the values 6 to 12. 
+
+```{r}
+ans<- sapply(6:12,generate_protein)
+ans
+```
+
+```{r}
+cat (paste(">ID.", 6:12, sep="", "\n",ans, "\n" ))
+```
+
+>Q. Are any of these sequences unique in nature - i.e. never found in nature. We can search "refseq-Protein" and look 100% Id and 100% coverage matches with Blastp?
+>> Nosignificant result was found. 
