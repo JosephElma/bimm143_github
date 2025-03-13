@@ -10,7 +10,7 @@ My Class work from W25 BIMM143 at UC San Diego [BIMM143](https://bioboot.github.
 
 -Class 07 [Intro to Machine Learning](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/class07/Labclass07.html)
 
--Class 08 [Unsupervised learing mini project](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/Class%2008.html)
+-Class 08 [Unsupervised learing mini project](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/class08_mini_project/Untitled.html)
 
 -Class 09 []
 
