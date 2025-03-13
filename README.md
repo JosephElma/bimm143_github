@@ -12,12 +12,13 @@ My Class work from W25 BIMM143 at UC San Diego [BIMM143](https://bioboot.github.
 
 -Class 08 [Unsupervised learing mini project](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/class08_mini_project/Untitled.html)
 
--Class 09 []
+-Class 09 [Halloween Candy Mini-Project](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/Class09/Class09.html)
 
--Class 10
+-Class 10 [Structural Bioinformatics (pt1)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/Class%2010/Class10.html)
 
--Class 12
 
--Class 13
+-Class 13 [Transcriptomics, RNA-Seq analysis, and the interpretation of gene lists](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/Class%2013/Class%2013.html)
 
--Class 14
+-Class 14 [RNA-Seq mini project](https://htmlpreview.github.io/?https://raw.githubusercontent.com/JosephElma/bimm143_github/refs/heads/main/Class%2014/Class14.html)
+
+
